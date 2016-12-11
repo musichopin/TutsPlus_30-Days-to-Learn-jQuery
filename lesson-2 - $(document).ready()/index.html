@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title></title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+	<style>
+	.emphasis { font-weight: bold;}
+	</style>
+
+	<script>
+
+
+	// *html'den önce gelmesine rağmen document.ready ile öncelikle
+	// DOM'un yüklenmesi için bekleniyor.
+	// below sta means when doc is ready run a function*
+	$(document).ready(function() {
+		$('li:first-child').addClass('emphasis');
+	});
+	// *li:first-child: get the list item that is the very first child of its parent*
+	
+	// alt:
+	// $(function() {
+	// 	$('li:first-child').addClass('emphasis');
+	// });
+
+	// alt2:
+	// $(document).ready(a);
+	// function a () {
+	// 	$('li:first-child').addClass('emphasis');
+	// }
+	</script>	
+</head>
+<body>
+
+<ul>
+	<li>hello</li>
+	<li>hello 2</li>
+	<li>hello 3</li>
+</ul>
+
+</body>
+</html>

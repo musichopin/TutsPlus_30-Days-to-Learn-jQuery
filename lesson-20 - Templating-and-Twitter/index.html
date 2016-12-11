@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>Twitter</title>
+	<style>
+	body { width: 600px; margin: auto; }
+	ul { list-style: none; }
+	li { padding-bottom: 1em; }
+	img { float: left; padding-right: 1em; }
+	a { text-decoration: none; color: #333; }
+	</style>
+</head>
+<body>
+
+<ul id="biebster-tweets">
+	<script id="tweets-template" type="text/x-handlebars-template">
+		{{#each this}} <!-- **for each item in the array create a list item** -->
+		<!-- **double curly braces for template is necessary** -->
+		<li>
+			<img src="{{thumb}}" alt="{{author}}">
+			<p><a href="{{url}}">{{tweet}}</a></p>
+		</li>
+		{{/each}}
+	</script>		
+</ul>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<script src="http://cloud.github.com/downloads/wycats/handlebars.js/handlebars-1.0.0.beta.6.js"></script>
+
+<script>
+
+// ***we pull in a list of twitter feed (justin bieber), then filter through the results and display them on the page with a thumbnail and heading and link to the tweet itself (very similar to example on lesson 19 except that we fetch data this time)***
+(function() {
+
+	// **normally Twitter object is stored in its own file**
+	var Twitter = {
+		init: function( config ) {
+			// new version (not working though): https://api.twitter.com/1.1/search/tweets.jsonp?q=tutspremium&callback=?
+			// in order to make cross domain request "&callback=?" added
+			this.url = 'http://search.twitter.com/search.json?q=' + config.query + '&callback=?';
+			this.template = config.template;
+			this.container = config.container;
+			// **we could also use $.extend method when passing object**
+
+			this.fetch();
+			// **we cannot access this.tweets from here since getJSON is asynchronous method (there is some way to handle this though: see deferred lesson) just like setInterval and setTimeOut. thats why we called attachTemplate from within getJSON method**
+		},
+
+		// ***we bind our data (this.tweets: array of objects) to the template
+		// and then we append the template to the dom***
+		attachTemplate: function() {
+			// compile wants a reference to the html for our template
+			// **template is local var**
+			var template = Handlebars.compile( this.template );
+			this.container.append( template( this.tweets ) );
+			// console.log( template( this.tweets ) );
+
+		},
+
+		fetch: function() {
+			var self = this; //**self refers to twitter object**
+
+			// *** data object > results array (of objects) > tweet object > properties like text
+			// query the url which will return a json response (object) and then execute a callback function into which json response (object) is passed with data parameter.
+			// results is an array of objects inside data object
+			// with $.map we filter through an existing array and for each array element we execute a function (so each object is represented with tweet variable and inside the tweet object we select properties like from_user, text, profile_image_url besides creating url to the tweet dynamically). 
+			// what we want is returning a new array. so the results of all new objects are stored in a new array called tweets***
+			$.getJSON( this.url, function( data ) { //$ olmasının sebebi jquery'e özgü olması
+				// console.log(data) -> results of all tweets logged to the console
+				// normally getJSON method should not store all logic as here (see: jQuery deferred lesson)
+				// ***inside callback function this kw contain info related to ajax request
+				// "var tweets" denseydi local var olacaktı***
+				self.tweets = $.map( data.results, function( tweet ) {
+					return { // **array is returned (birden fazla property return edildiği için object içerisinde return edilmiş)**
+						// **module pattern olduğu için iki noktanın sağındaki ve solundaki aynı ismi alabilir. aynı zamanda iki noktanın solundaki isim yukarıdaki template için önemli**
+						author: tweet.from_user,
+						tweet: tweet.text,
+						thumb: tweet.profile_image_url,
+						url: 'http://twitter.com/' + tweet.from_user + '/status/' + tweet.id_str
+					};
+				});
+
+				// For future lessons, research $.deferred, viewers. :)
+				self.attachTemplate(); 
+			});
+		}
+	};
+
+	Twitter.init({
+		template: $('#tweets-template').html(),
+		container: $('#biebster-tweets'),
+		query: 'Justin Bieber'
+	});
+	// **we pass object (which has properties related to dom) instead of hardcoding values inside init and attachTemplate methods bc the more we attach data to the dom and dom structure the more it becomes depended upon that structure**
+
+})();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+#slider-nav {
+	/* **for those whose js is disabled we dont display the slider-nav** */
+	display: none; 
+	margin-top: 1em;
+}
+
+#slider-nav button {
+	padding: 1em;
+	margin-right: 1em;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.slider {
+	width: inherit; /*600px*/
+	height: 300px;
+	overflow: scroll;
+	/* for js disabled users we enable scrollbar */
+}
+
+/* **.slider ul, img'ları tutan film şeridi gibi düşünülebilir.
+it becomes wrapper for images** */
+.slider ul {
+	width: 10000px;
+	list-style: none;
+}
+
+.slider li {
+	/*we lay images side by side*/
+	float: left;
+}

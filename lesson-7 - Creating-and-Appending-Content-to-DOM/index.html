@@ -1,0 +1,144 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>Appending Content</title>
+	<style>
+	article {
+		width: 600px;
+		margin: auto;
+	}
+	blockquote.co {
+		float: right; /*sonraki elementler floated elementin yerini doldurur*/
+		background: #e3e3e3;
+		font-size: 2em;
+		width: 35%;
+		text-align: center;
+	}
+	</style>
+</head>
+<body>
+
+
+<article>
+	<h1>My Awesome Post</h1>
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua.
+	</p>
+	<p>
+		<span class=co>Lorem ipsum dolor sit amet</span>, consectetur adipisicing elit, sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua.
+	</p>
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua.
+	</p>
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua.
+	</p>
+	<p>
+		Consectetur adipisicing elit, sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. <span class=co>Hello from JavaScript.</span> sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua.
+	</p>
+</article>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+
+<script>
+
+(function() {
+
+	// grab all span elements that has a class of "co" we then filter through each of them and apply a blockquote to their nearest paragraph parent
+	// each metodu yerine filter metodu da kullanılabilir
+	// callback function içinde kullanılan this kw elementi işaret eder
+	var co = $('article').find('span.co').each(function() {
+		// alt: $('article span.co').each(function() {...
+		var $this = $(this); // cached object
+		// **this refers to span element with co class**
+
+		$('<blockquote></blockquote>', {
+			class: 'co',
+			text: $this.text() // text of span element
+		}).prependTo( $this.closest('p') );
+		// with "$(this).closest('p')" we select the closest parent p element
+	});
+	// ***what is neat about this technique is it makes blockquotes with all span elements having same class name without writing on html***
+
+	// similar, basic version:
+	// var co = $('span.co').each(function() {
+	// 	$(this).closest('p').prepend('hi there');
+	// })
+
+})();
+
+// ***ADDING ELEMENTS***
+// $('article').append('Added to the end');
+// $('article').prepend('Added to the beginning');
+
+// $('h1').after('hello js');
+// $('p').first().before('hello js');
+// alt:
+// $('article').find('p').first().before('hello js');
+
+// using html fragment:
+// old style:
+// $('<h2>at the bottom</h2>').appendTo('article');
+// preferred style: we use object to set values and attributes
+// $('<h2></h2>', {
+// 	text: 'at the bottom',
+// 	class: 'myclass'
+// }).appendTo('article'); // ($('article')) denebilir
+
+// $('<h2></h2>', {
+// 	text: 'at the top',
+// 	class: 'myclass'
+// }).prependTo('article');
+
+// $('<h2></h2>', {
+// 	text: 'hello js',
+// 	class: 'myclass'
+// }).insertAfter('h1'); // ($('h1')) denebilir
+
+// $('<h2></h2>', {
+// 	text: 'hi js',
+// 	class: 'myclass'
+// }).insertBefore('p:nth-child(5)');
+
+// if ( container.find('span.close').length ){container[config.effect](config.speed);}
+// 			 else{cf.close.call(container); container[config.effect](config.speed);}
+// 		}
+
+
+// ***MOVING EXISTING ELEMENTS***
+// $('h1').appendTo('article'); // ($('article')) denebilir
+
+// we see multiple h1 tags because of being generic:
+// $('p').after($('h1')); // p sonrası h1 yerleştir
+// *to be specific we use :nth-child(), :first-child, :first, eq(), first(), class etc*
+// $('p').eq(0).after($('h1')); // same as "$('p').eq(0).after($('p').eq(0).prev());"
+// faster way: using anonymous function / callback function
+// $('p').eq(0).after(function(){
+// 	return $(this).prev();
+// });
+// alt:
+// $('p').eq(0).each(function(){
+// 	$(this).after($('h1')); // same as $(this).after($(this).prev());
+// });
+
+</script>
+
+</body>
+</html>

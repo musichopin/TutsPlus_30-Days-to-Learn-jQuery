@@ -1,0 +1,161 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>The this Keyword</title>
+</head>
+<body>
+
+
+<a href="http://tutsplus.com" class="anchorClass">Click Me</a>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<script>
+
+//6
+var obj = {
+	doIt: function(e) {
+		console.log(this); // ***refers to obj object***
+		// ***prints:  Object { doIt=function()}***
+		e.preventDefault();
+	}
+}
+
+$('a').on( 'click', $.proxy(obj.doIt, obj) ) // alt: jquery.proxy(...)
+// ***in the 2nd arg we provide what would be treated as "this" within obj.doIt
+// we want obj to be equivalent of this inside doIt method***
+
+
+// // 1
+// (function doSomething(e){
+// console.log(this); // **refers to window object**
+// // prints: Window index.html
+// }());
+
+// // 1.3
+// function doSomething(e){
+// console.log(this); // ***refers to window object 
+// (doSomething functionı object olsaydı ve initialize edilseydi 
+// this kw doSomething objectini nitelerdi)***
+// // prints: Window index.html
+// };
+
+// doSomething();
+
+// // 1.4
+// function doSomething(){
+// 	console.log(this); // **this refers to window object**
+// };
+
+// $('a').on( 'click', function(){
+// 	console.log(this); // this refers to a element
+//	console.log($(this)); // **this refers to object of a element**
+// 	doSomething();
+// });
+
+// // 1.5
+// $.fn.doSomething = function (){
+// 	$(this).hide(); 
+// 	console.log(this); // ***this refers to object of a element (ODD CASE)***
+// 	// doSomething prototype fonksiyonu $('window').doSomething(); 
+// 	// şeklinde çağırılmış olsa this kw windowu niteleyecekti**
+// };
+
+// $('a').on( 'click', function(){
+// 	console.log(this); // this refers to a element
+// 	$(this).doSomething();
+// });
+
+// // 1.7
+// var obj = {
+// 	doIt: function(){
+// 		console.log(this); // ***refers to obj object***
+// 		// prints: Object { doIt: obj.doIt() }
+// 	}
+// }
+
+// obj.doIt();
+// console.log(this); // *refers to window object*
+
+// //2
+// function doSomething(e){
+// 	console.log(e); // event object carries e.thing related to event
+// 	// prints:  Object { originalEvent=Event click,  type="click",  timeStamp=379783796,  more...}
+// 	console.log(this) // ***refers to a element***
+// 	// prints: <a href="http://tutsplus.com">
+// 	e.preventDefault();
+// }
+
+// $('a').on('click', doSomething);
+
+// //3
+// var obj = {
+// 	doIt: function(e){
+// 		console.log(this); // **refers to a element **
+//		console.log($(this)); // ***refers to object of a element***
+// //	***$(this) denseydi jquery metodlarına erişmek için kullanılacaktı:
+// //	jQuery(this).find("img");***
+// 		// prints: <a href="http://tutsplus.com">
+// 		e.preventDefault();
+// 	}
+// }
+// 
+// $('a').on('click', obj.doIt);
+
+// //4
+// var obje = {
+// 	doIt: function(){
+// 		console.log(this); // ***refers to obje object***
+// 	// prints: Object { doIt=function()}
+// 	}
+// }
+
+// // ***within callback function this refers to anchor clicked***
+// $('a').on('click', function(e){
+// 	obje.doIt();
+// 	console.log(this); // **refers to a element**
+// 	console.log(this.className); // ***prints className; vanilla js***
+// 	console.log($(this).attr('class')); // ***prints className; jquery***
+// 	if ($(this).hasClass('anchorClass')) console.log('has a class of anchorClass indeed'); // **boolean**
+// 	console.log($(this)); // ***refers to object of a element***
+// 	// prints: <a href="http://tutsplus.com">
+// 	e.preventDefault();
+// });
+
+// //5
+// var obje = {
+// 	doIt: function(){
+// 		console.log(this); // **refers to a element**
+// 	// prints: <a href="http://tutsplus.com">
+// 	}
+// }
+
+// $('a').on('click', function(e){
+// 	obje.doIt.call(this); 
+//  // alt: obje.doIt.apply(this); // *only difference is how we pass the 
+// 	// variables to the doIt function*
+// 	// *** in the arg of call() we provide what would be treated as "this" within obje.
+//  // this kw inside call method means inside doIt method 
+// 	// this should refer to anchor element. if we said "obje.doIt.call(obje)"
+//  // it would pass obje object ***
+// 	console.log(this); // **refers to a element**
+// 	// prints: <a href="http://tutsplus.com">
+// 	e.preventDefault();
+// });
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

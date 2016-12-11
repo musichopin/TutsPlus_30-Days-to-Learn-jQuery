@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>jQuery Events</title>
+	<link rel="stylesheet" href="day.css">
+</head>
+<body>
+
+<h1>My Website</h1>
+
+<button data-file="day">Day</button>
+<button data-file="night">Night</button>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+
+<script>
+
+// self-executing anonymous function provides cleaning as well
+(function() {
+	var link = $('link');
+	
+	// execute anonymous function (even handling) when each button (element) is clicked on (event)
+	// alt: slower version: $('button').click(function(){...});
+	// (there are methods like click such as change and hover)
+	$('button').on('click', function() {
+		// "this" refers to the specific button element clicked (for within callback func.)
+		// "this" is a dom node whereas "$(this)" makes the node wrapped in jquery and it is used to access jquery methods (for within callback func.)
+		// by using $this variable instead of $(this) we don't dive into dom pool multiple times and get faster. this action is called caching. we cache query into a variable
+		var $this = $(this),
+			stylesheet = $this.data('file');
+
+		link.attr('href', stylesheet + '.css');
+		// disables the sibling's disabled attribute:
+		$this.siblings('button').removeAttr('disabled');
+		$this.attr('disabled', 'disabled');
+		// we disable the attribute so that the clicked css file 
+		// doesnt become equal to the one selected
+
+		// a bit more complex version of the above 2 lines of code:
+		// $this
+		// 	.siblings('button')
+		// 		.removeAttr('disabled')
+		// 		.end()
+		// 	.attr('disabled', 'disabled');
+
+
+		// alt2: if we had the same button name and css file:
+		// var stylesheet = $(this).text().toLowerCase();
+		// $('link').attr('href', stylesheet + '.css');
+
+		// alt3: unoptimized version of what we did with using html5 custom attributes 
+		// (we cud have used attr('data-file') instead of data('file')):
+		// var stylesheet = $(this).data('file');
+		// $('link').attr('href', stylesheet + '.css');
+	});
+})();
+
+</script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>Custom Events</title>
+	<style>
+	body { width: 600px; margin: auto; font-family: sans-serif; text-align: center; }
+	li { text-align: left; padding-bottom: 1em; }
+	</style>
+</head>
+<body>
+
+<h2>What Are You Interested In?</h2>
+
+<form action="#">
+	<p><input type="text" name="q" id="q"></p>
+</form>
+
+<ul class="tweets"></ul>
+
+<!-- ***separate project from index.html*** -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+
+<script>
+
+(function($) {
+	var o = $( {} );
+
+	$.each({
+		on: 'subscribe',
+		trigger: 'publish',
+		off: 'unsubscribe'
+	}, function( key, api ) {
+		$[api] = function() {
+			o[key].apply( o, arguments );
+		}
+	});
+
+})(jQuery);
+
+
+(function($) {
+	// we create a twitter object, which contains all methods that are vital 
+	// to our twitter object
+	var Twitter = {
+		init: function() {
+			this.template = '<li>{{tweet}}</li>';
+			this.query = '@tutspremium';
+			this.tweets = [];
+			this.timer;
+
+			// we have dedicated methods for storing our subscriptions, any cached values and our events
+			this.cache();
+			this.bindEvents();
+			this.subscriptions();
+
+			// makes default fetch from twitter api
+			$.publish( 'twitter/query' );
+			this.searchInput.val( this.query );
+
+			// twitter object is returned, so anywhere in the project we can access the twitter namespce
+			return this;
+		},
+
+		cache: function() {
+			// we cache the tweets container so that we dont query the dom again and again
+			this.container = $('ul.tweets');
+			this.searchInput = $('#q');
+		},
+
+		// there might be many events in a real world project
+		bindEvents: function() {
+			this.searchInput.on( 'keyup', this.search );
+		},
+
+		subscriptions: function() {
+			// we are subscribing to when there is a new query, in that case we use fetchjson
+			$.subscribe( 'twitter/query', this.fetchJSON );
+			$.subscribe( 'twitter/results', this.renderResults );
+			// when results are available executes the renderResults method
+		},
+
+		search: function() {
+			var self = Twitter,
+				input = this;
+
+			// we clear timeout in case user types really fast
+			clearTimeout( self.timer );
+
+			// if user typed in at least 3 characters, we are going to update the query and twitter.query becomes equal to whatever the user typed in
+			// basic idea with using settimeout and cleartimeout methods is that we dont wanna publish we got a new twitter query until the user has finished typing (performance-wise)
+			self.timer = ( input.value.length >= 3 ) && setTimeout(function() {
+				self.query = input.value;
+				$.publish( 'twitter/query' );
+			}, 400);
+		},
+
+		// setsup a url to the twitter api and use the getjson method as known before
+		fetchJSON: function() {
+			var url = 'http://search.twitter.com/search.json?callback=?&q=';
+
+			return $.getJSON( url + Twitter.query, function( data ) {
+				Twitter.tweets = data.results;
+				$.publish( 'twitter/results' );
+				// letting know that it gets the results from twitter
+			});
+		},
+
+		// renderresults filters through the twitter data and throw it into the dom
+		renderResults: function() {
+			var self = Twitter,
+				frag = [],
+				tweet;
+
+			self.container.html(
+				$.map( self.tweets, function( obj, index ) {
+					var t =  // updating url
+					// with regex we get 1 or more text starting with http w\out space
+						obj.text.replace(/(http:[^\s]+)/, '<a href="$1">$1</a>')
+								.replace(/@([^\s:]+)/, '<a href="http://twitter.com/$1">@$1</a>');
+
+					return self.template.replace(/{{tweet}}/, t);
+				}).join('') // with join() we convert array into string
+			);
+		}
+	};
+
+	// making twitter object available to the global namespace in case needed
+	window.Twitter = Twitter.init();
+
+})(jQuery);
+
+</script>
+
+</body>
+</html>
+
+
+

@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>The Obligatory Slider</title>
+	<style>
+	body {
+		width: 600px;
+		margin: 100px auto 0;
+	}
+	* { margin: 0; padding: 0; }
+	</style>
+	<link rel="stylesheet" href="slider.css">
+</head>
+<body>
+
+<div class="slider">
+	<ul>
+		<li><img src="img/img1.gif" alt="image"></li>
+		<li><img src="img/img2.gif" alt="image"></li>
+		<li><img src="img/img3.gif" alt="image"></li>
+		<li><img src="img/img4.gif" alt="image"></li>
+	</ul>
+</div>
+
+<div id="slider-nav">
+	<button data-dir="prev">Previous</button>
+	<button data-dir="next">Next</button>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<script src="slider.js"></script>
+<script>
+
+(function() {
+	// if we didnt adjust overflow property, we cud write like this: $('div.slider ul')
+	var container = $('div.slider').css('overflow', 'hidden').children('ul'),
+		slider = new Slider( container, $('#slider-nav') );
+
+	// 1.console.log(slider);
+	// prints, Object { container: Object, nav: Object, imgs: Object, imgWidth: 600, imgsLen: 4, current: 0 }
+	// 2.console.dir(slider);
+	// 3.console.log(slider.container);
+	// prints, Object { length: 1, prevObject: Object, context: HTMLDocument → index.html, selector: "div.slider.children(ul)", 1 more… }
+
+	// *would be gone in 1b, 1c and 1d (see js page):*
+	slider.nav.find('button').on('click', function() {
+		// console.log(this); // prints, <button data-dir="next"> or <button data-dir="prev">
+		slider.setCurrent( $(this).data('dir') ); // **this refers to button element**
+		slider.transition();
+	});		
+})();
+
+</script>
+
+</body>
+</html>

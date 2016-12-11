@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>AJAX: load</title>
+</head>
+<body>
+
+<nav>
+	<ul>
+		<li><a href="about.html">About</a></li>
+		<li><a href="contact.html">Contact</a></li>
+		<!-- **if js is disabled we redirect the users to the contact page** -->
+	</ul>
+</nav>
+
+<div class="wrap"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+
+<script>
+// *we might need to run this project from the localhost or  depending on the browser*
+(function() {
+	// *by caching we dont jump into the dom to grap div with a class of wrap*
+	var wrap = $('div.wrap');
+
+	$('a').on('click', function( e ) {
+		var href = $(this).attr('href');
+
+		wrap.load( href + ' .container' );
+		// ***we only grap an element with a class of container from within the href.
+		// jquery fetches the whole page but then parses/filter however we need***
+
+		e.preventDefault();
+		// *we prevent the default action and perform a async 
+		// request rather than full page request*
+	});	
+})();
+
+	
+
+
+</script>
+
+</body>
+</html>
+
+
+

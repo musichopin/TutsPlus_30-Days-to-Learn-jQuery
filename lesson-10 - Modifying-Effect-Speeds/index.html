@@ -1,0 +1,105 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>Custom Effect Methods</title>
+	<style>
+	p { margin-top: 0;}
+	</style>
+</head>
+<body>
+
+
+<h1>Reveal</h1>
+<div class=content>
+	<p>
+	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	</p>
+	<p>
+	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	</p>	
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<script>
+
+// 5:
+$.fx.speeds.custom = 5000; //fx: effect
+
+$('div').hide();
+
+$.fn.flashFlash = function() { //fn: prototype
+	console.log(this); // **this -> div.content
+	// flashFlash prototype fonksiyonu $('window').flashFlash(); 
+	// şeklinde çağırılmış olsa this kw windowu niteleyecekti**
+	return $(this).slideDown(500, function() {
+		$(this).delay(1000).slideUp('custom');
+	})
+}
+
+$('div').flashFlash();
+
+
+// //5b:
+// $.fx.speeds.custom = 5000; //fx: effect
+
+// $('div').hide();
+
+// $.fn.flashFlash = function() { //fn: prototype
+// 	return $(this).slideDown(500, function() { // **this: div.content**
+// 		$(this).delay(1000).slideUp('custom');
+// 	})
+// }
+
+// $('h1').on('click', function(){
+// 	$(this).next().flashFlash();
+// });
+
+//1
+// $('div.content').hide();
+
+// $('h1').on('click', function() {
+// 	$(this).next().toggle('fast');
+// })
+
+//2
+// console.log($.fx.speeds); // prints speeds object taken from jquery api
+
+// $('div.content').hide();
+
+// $('h1').on('click', function() {
+// 	$(this).next().slideDown('_default');
+// 	// same as: $(this).next().slideDown('asdfas');
+// 	// *jquery defaults to 400 ms if it doesn't understand the argument*
+// })
+
+//3: using default speed **(we cud have updated the default value as well)**
+// // $.fx.speeds._default = 400;
+
+// $('h1').on('click', function() {
+// 	$(this).next().slideUp('asdf');
+// })
+
+//4:
+// $.fx.speeds.custom = 5000;
+// // fx means effect
+
+// $('h1').on('click', function() {
+// 	$(this).next().slideUp('custom');
+// })
+
+</script>
+
+</body>
+</html>

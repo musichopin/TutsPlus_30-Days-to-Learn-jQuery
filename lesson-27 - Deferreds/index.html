@@ -1,0 +1,268 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>jQuery Deferreds</title>
+	<style>
+	.box {
+		width: 200px;
+		height: 200px;
+		background: green;
+		display: inline-block;
+		margin-right: 3em;
+	}
+	</style>
+</head>
+<body>
+
+	<div class="box">my box</div>
+	<div class="box">my box</div>
+	<div class="box">my box</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script>
+// ***with deferreds (erteleme) we are attempting to reach the value of myVar variable when we are not setting its value until some point in future. (other alternative to deferreds was using the publish/subscribe methods in tutorial 22. )***
+
+// //1: doesnt work
+// var myVar;
+
+// // this could be an ajax request
+// setTimeout(function(){
+// 	myVar = "my value";
+// 	console.log(myVar + "in the timeout");
+	
+// }, 2000);
+
+// console.log(myVar); // ***becomes undefined***
+// // ***shouldnt be written inside call back function which is passed to setTimeout(), since it would produce too many of nested codes (see tutorial 20)***
+
+
+//2: when deferred succeeds
+var myVar;
+
+var setVal = function() {
+	var deferred = new $.Deferred(); // create deferred; new kw is not obligatory
+
+	setTimeout(function(){
+		myVar = "my value";
+		deferred.resolve(); // finish the deferred		
+	}, 2000);
+
+	return deferred.promise(); // return limited version of deferred
+	// ***promise(), in this context means that "I promise to let setVal know when the deferred is resolved (by default deferred was in a state of pending until being resolved. and at that point any callbacks that are attached would fire)"***
+};
+
+setVal().done(function(){ // when setVal is done execute this function
+	console.log('all done ' + myVar);
+});
+
+
+// //3: when deferred fails
+// var myVar;
+
+// var setVal = function() {
+// 	var deferred = new $.Deferred(); // create deferred
+
+// 	setTimeout(function(){
+// 		myVar = "my value";
+// 		deferred.reject(); // finish the deferred		
+// 	}, 2000);
+
+// 	return deferred.promise(); // return limited version of deferred
+// };
+
+// setVal().fail(function(){
+// 	console.log('all done ' + myVar);
+// });
+
+
+// //4: regardless of whether deferred fails or succeeds
+// var myVar;
+
+// var setVal = function() {
+// 	var deferred = new $.Deferred(); // create deferred
+
+// 	setTimeout(function(){
+// 		myVar = "my value";
+// 		deferred.reject(); // finish the deferred		
+// 	}, 2000);
+
+// 	return deferred.promise(); // return limited version of deferred
+// };
+
+// setVal().done(function(){
+// 	console.log('all done ' + myVar);
+// });
+
+
+// ***there are 2 ways if we wanna run different functions based on deferred being resolved or rejected. there is manual way and jquery's helper way:***
+// //5a: manual way:
+// var myVar;
+
+// var setVal = function() {
+// 	var deferred = new $.Deferred(); // create deferred
+
+// 	setTimeout(function(){
+// 		myVar = "my value";
+// 		console.log(myVar); // ***logs into the console anyway***
+// 		if (true) {
+// 			deferred.resolve();
+// 		} else {
+// 			deferred.reject();	
+// 		}
+// 	}, 2000);
+
+// 	return deferred.promise(); // return limited version of deferred
+// };
+
+// setVal().done(function(){
+// 	console.log('all done ' + myVar);
+// }).fail(function(){
+// 	console.log('failed');
+// });
+
+// //5b: using jquery's helper method, then():
+var myVar;
+
+var setVal = function() {
+	var deferred = new $.Deferred(); // create deferred
+
+	setTimeout(function(){
+		myVar = "my value";
+		console.log(myVar); // ***logs into the console anyway***
+		if (true) {
+			deferred.resolve();
+		} else {
+			deferred.reject();	
+		}
+	}, 2000);
+
+	return deferred.promise(); // return limited version of deferred
+};
+
+setVal().then(
+	// **with 2 function first one becomes done and second one becomes fail. if it was only 1 function it would perceive it as done method**
+	function(){
+		console.log('all done ' + myVar);
+	}, 
+	function(){
+		console.log('failed');
+	}
+);
+
+
+// ***working with twitter api***
+//6a: **we get tweets referencing cats using older model without using deferreds. problem with this model is that all of our logic needs to be placed inside success callback, which would be limiting for other functions that wants to reach this data.**
+$.searchTwitter = function(search) { // **we cud also say, var searchTwitter**
+	$.ajax({
+		url: 'http://search.twitter.com/search.json',
+		data: { q: search }, // pass query as data
+		// cleaner to using: 'http://search.twitter.com/search.json?q=dogs&callback=?'
+		dataType: 'jsonp',
+		success: function (results) { // success callback function
+			console.log(results);
+		}
+	});
+};
+
+$.searchTwitter( 'cats' );
+
+//6b: using deferreds
+$.searchTwitter = function(search) {
+	var dfd = new $.Deferred();
+
+	$.ajax({
+		url: 'http://search.twitter.com/search.json',
+		data: { q: search },
+		dataType: 'jsonp',
+		success: dfd.resolve
+		// **we only wanna resolve when success method fires, 
+		// that is why it wasnt written "dfd.resolve()"**
+	});
+
+	return dfd.promise();
+};
+
+$.searchTwitter( 'cats' ).then(function(results){
+	// automatically passed args to this callback func.
+	console.log(results);
+});
+
+
+//7: we can fire multiple callbacks
+$.searchTwitter = function(search) {
+	var dfd = new $.Deferred();
+
+	$.ajax({
+		url: 'http://search.twitter.com/search.json',
+		data: { q: search },
+		dataType: 'jsonp',
+		success: dfd.resolve,
+		error: dfd.reject
+	});
+
+	return dfd.promise();
+};
+
+var outer = $.searchTwitter('cats');
+
+outer.then(function(results){
+	console.log(results);
+}, function(results){
+	console.log(results);
+});
+
+// and have a 2nd callback
+outer.then(function(results){
+	console.log(results);
+});
+
+
+//8: ***we can get rid of clutter code since by default ajax method automatically returns a promise. what is more we dont have to bother with success or error methods***
+$.searchTwitter = function(search) {
+
+	return $.ajax({
+		url: 'http://search.twitter.com/search.json',
+		data: { q: search },
+		dataType: 'jsonp'
+		// **we didnt bother with success or error properties this time**
+	}).promise();
+
+};
+
+var outer = $.searchTwitter('cats');
+
+outer.then(function(results){
+	console.log(results);
+});
+
+
+//9: ***deferreds with animation: when all of the animations related to div completed in a row, then execute the callback function***
+$('div.box').each(function(i){
+	$(this).delay(1000*i++).fadeOut(1000)
+}).promise().done(function(){ 
+// **promise to let us know when delaying and fading is done and when done execute this function**
+	console.log('All animations have fired.');
+});
+
+
+//10: ***using when method: we can stack multiple asynchr operations (like when 3 ajax requests completed only then we want to proceed)***
+function getTweets(search) {
+
+	return $.ajax({
+		url: 'http://search.twitter.com/search.json',
+		data: { q: search },
+		dataType: 'jsonp'
+		// **we didnt bother with success or error properties this time**
+	}).promise();
+
+};
+
+$.when(getTweets('dogs'), getTweets('cats')).done(function(results1, results2){
+	console.log(results1);
+	console.log(results2);
+});
+
+</script>
+</body>
+</html>

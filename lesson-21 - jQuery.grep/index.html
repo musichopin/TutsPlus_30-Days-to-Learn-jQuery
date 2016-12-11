@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>$.grep</title>
+</head>
+<body>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<script>
+	(function() {
+		
+		// 3: array of objects
+		var arr = [
+			{
+				first: 'Jeffrey',
+				last: 'Way'
+			},
+			{
+				first: 'Allison',
+				last: 'Way'
+			},
+			{
+				first: 'Jeffrey',
+				last: 'Smith'
+			},
+			{
+				first: 'John',
+				last: 'Doe'
+			},
+			{
+				first: 'Thomas',
+				last: 'Way'
+			}
+		];
+
+		// **filters through the array and for each object 
+		// we execute a callback function**
+		arr = $.grep( arr, function( obj, index) {
+			return obj.last === 'Way';
+		});
+
+		console.log(arr);
+
+
+		// //1:
+		// var arr = [1,2,3,4,5,6,7,8,9,10];
+
+		// arr = $.grep( arr, function( obj, index) {
+		// 		return obj > 5;
+		// 	});
+
+		// console.log(arr);
+
+
+		// //2: **inverts the result (by default it was undefinded and falsy value):**
+		// var arr = [1,2,3,4,5,6,7,8,9,10];
+
+		// arr = $.grep( arr, function( obj, index) {
+		// 		return obj > 5;
+		// 	}, true);
+
+		// console.log(arr);
+
+	})();
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+

@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title></title>
+	<style>
+	ul li { color: red;}
+	.emphasis { color: green;}
+	</style>
+	
+</head>
+<body>
+
+<ul>
+	<li>hello</li>
+	<li>hello 2</li>
+	<li>hello 3</li>
+</ul>
+
+<!-- should not be placed in head tags -->
+<!-- cdn version: -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+<!-- alt: local copy (both methods have its own advantages) -->
+<!-- <script src="jquery-1.7.1.js"></script> -->
+
+<script>
+	var lis = jQuery('ul li');
+	console.log(lis);
+
+	// for dynamic changes:
+	// jQuery('ul li').css('color', 'red');
+
+	// in conventional way we change class name with jquery
+	// *jQuery('ul li'): orders jquery to use "ul li" css selector and find/return all list items by searching the DOM*
+	jQuery('ul li').addClass('emphasis');
+	// alt:
+	window.jQuery('ul li').addClass('emphasis');
+	// alt:
+	$('ul li').addClass('emphasis');
+	// alt:
+	window.$('ul li').addClass('emphasis');
+</script>
+
+</body>
+</html>

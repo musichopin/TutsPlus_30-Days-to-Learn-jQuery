@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>Mustache</title>
+<style>
+h2 span { color: gray; font-size: .8em; }
+</style>
+</head>
+<body>
+
+<ul class="tweets">
+	<script id="template" type="text/x-handlebars-template">
+		{{#each this}} <!-- ***foreach object in array*** -->
+		<li>
+			<!-- **calls the fullName helper method and passes author object**-->
+			<h2>{{fullName author}} {{#if img}} - <span>{{img}}</span> {{/if}} </h2>
+			<p>{{{tweet}}}</p>
+			<!-- **with 3 curly braces we render html tags inside context array** -->
+			<!-- ***if sta used for uncommon elements in each object*** -->
+
+			{{#if quote}}
+				<h5>{{quote}}</h5>
+			{{else}}
+				<h5>Author does not have a quote.</h5>
+			{{/if}}
+
+			{{#unless baby}} <!-- if not: #if (!baby)-->
+				<i>Author doesn't have a baby</i>
+			{{else}}
+				<h5>{{baby}}</h5>
+			{{/unless}}
+		</li>
+		{{/each}} <!-- closed the each sta -->
+	</script>
+</ul>
+
+<!-- 1: basic version.
+template corresponds to tweets -->
+<!-- <ul class="tweets">
+	<script id="template" type="text/x-handlebars-template">
+		<li>
+			<h2>{{author}}</h2>
+			<p>{{tweet}}</p>
+		</li>
+	</script>
+</ul> -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<script src="http://cloud.github.com/downloads/wycats/handlebars.js/handlebars-1.0.0.beta.6.js"></script>
+
+<script>
+
+(function() {
+	var context = [ // array of objects
+		{
+			author: { first: 'Jeffrey', last: 'Way', age: 27 },
+			tweet: '30 Days to Learn jQuery Rocks',
+			quote: 'Never ever, ever, ever give up.',
+			img: 'profile picture'
+		},
+		{
+			author: { first: 'John', last: 'Doe', age: 45 },
+			tweet: '<strong>30 Days</strong> to Learn jQuery Rocks',
+			baby: 'Jack'
+		}
+	],
+		// **returns template and compiles it**
+		template = Handlebars.compile( $('#template').html() );
+
+	// ***helper function created so that we can reach the indexes and values within 
+	// author object. we created a helper and called it fullName. we then (inside 
+	// template above) called this method and passed author object as argument***
+	Handlebars.registerHelper('fullName', function( author ) {
+		return author.first + ' ' + author.last + ' - ' + author.age;
+	});
+
+	$('ul.tweets').append( template(context) );
+
+	// // 1: basic version
+	// // **if we used object instead of array the syntax would change slightly in template 
+	// // and we wud use for each. see: 2nd example**
+	// var data = {
+	// 	author: 'Jeffrey Way',
+	// 	tweet: '30 days to learn jquery rocks'
+	// };
+
+	// // binding data (array/object) to template
+	// var template = Handlebars.compile( $('#template').html() );
+	// // *template becomes a function in which pass an object/array*
+	// $("ul.tweets").append(template(data));
+
+})();
+
+</script>
+
+
+</body>
+</html>
+
+
+
+
+
+
+
+

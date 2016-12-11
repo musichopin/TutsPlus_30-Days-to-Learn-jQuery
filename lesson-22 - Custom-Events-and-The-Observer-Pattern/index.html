@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>Custom Events</title>
+</head>
+<body>
+
+<h1>Hi There</h1>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+
+<script>
+	
+// PubSub
+(function( $ ) {
+	// *passes an empty object to jQuery, thus returns an instance of jQuery assigned to var o*
+	var o = $( {} );
+	// console.dir(o); // we create a new instance of jquery which has access to all jquery methods and have a length of 1
+
+	// we filter through the object and for each one execute a function
+	$.each({
+		trigger: 'publish',
+		on: 'subscribe',
+		off: 'unsubscribe'
+	}, function( key, val ) {
+		// we cudnt use jQuery.val
+		jQuery[val] = function() {
+			o[key].apply( o, arguments );
+		};
+	});
+})( jQuery ); /*$ sign refers to jQuery*/
+
+
+$.getJSON('http://search.twitter.com/search.json?q=dogs&callback=?', function( results) { 
+	$.publish( 'twitter/results', results ); // *trigger()*
+});
+
+// **.map is used to modify an array/object, whilist .each is used to iterate an array/object**
+$.subscribe( 'twitter/results', function( e, results ) { // *on()*
+	$('body').html(
+		$.map( results.results, function( obj, index) {
+			return '<li>' + obj.text + '</li>';
+		}).join('') // *argument içinde olduğundan noktalı virgül gelmedi*
+		// **if we hadnt use join(), array (of objects) would have been returned**
+	);
+		// // alt: assigning map to a variable
+		// var map = $.map( results.results, function( obj, index) {
+		// 	return '<li>' + obj.text + '</li>';
+		// });
+		// $('body').html(map.join(''));
+});
+
+
+// //1 custom events
+// $('body').on('app/randomName', function() {
+// 	console.log('clicked');
+// });
+
+// $('body').trigger('app/randomName'); // app/: namespace, randonName: event
+
+
+// //2 using custom events with async getJSON 
+// // (deferred is even easier: see jeffrey deferred tutorial)
+// $.getJSON('http://search.twitter.com/search.json?q=dogs&callback=?', function( results) {
+// 	$(document).trigger('twitter/result', results); // **twitter/: namespace, results: event**
+// 	// ***we trigger custom result event with results data being fetched from twitter api***
+// 	// **trigger refers to publish**
+// });
+
+// // **refers to subscribe: subscribing to when results got fetched from twitter api**
+// $(document).on('twitter/result', function(event, results){ 
+// 	console.log(results);
+// });
+
+// // *customs events provide flexibility* 
+// $(document).on('twitter/result', function(e, results){ // refers to subscribe
+// 	// do sth else with the results...
+// });
+</script>
+
+</body>
+</html>
+
+
+

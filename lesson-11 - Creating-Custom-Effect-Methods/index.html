@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>Custom Effect Methods</title>
+	<style>
+	p { margin-top: 0;}
+	/* ***margin for the h1 and the p are clashing once we make the p visible*** */
+	</style>
+</head>
+<body>
+
+<h1>Click Me</h1>
+
+<div class=content>
+	<p>
+	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	</p>
+	<p>
+	Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+	tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+	quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+	cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	</p>	
+</div>
+
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<script>
+
+// 2:
+//we put into self invoking anany. func. so that variables become local
+(function() {
+	var content = $('div.content').hide(); // vars kept at the top
+	// alt:
+	// var content = $('div.content');
+	// content.hide();
+
+	// fn means prototype
+	// *** "jQuery.fn.flash" was "jQuery.fn[name]" on API, it cud be written as "jQuery.fn["flash"]" as well ***
+	// ***object değil, regular function olarak düşünmek lazım***
+	jQuery.fn.flash = function( speed, easing, callback ) { // returns object
+		var $this = $(this); // ***this refers to div with a class of content***
+	// flash prototype fonksiyonu $('window').flash(); 
+	// şeklinde çağırılmış olsa this kw windowu niteleyecekti**
+
+		return $this.slideDown(500, function() { // even if we didnt use return sta it wud work
+	 		$this.delay(2000).slideUp(500);
+	 		console.log('waits for slideDown() to finish');
+		});
+	};
+
+	$('h1').on('click', function() {
+		content.flash();
+	});	
+})();
+
+
+// // 1: basic, core version:
+// $('div.content').hide();
+
+// // we are creating helper method
+// jQuery.fn.flash = function( speed, easing, callback ) { // return objects
+// 	var $this = $(this);
+// 	 // $this.slideDown(2000).delay(2000).slideUp(500);
+// 	 // console.log('hi'); // doesn't execute this code after previous effects finished
+// 	 // **in order to execute the code when slide is completed we pass 2nd parameter**
+// 	 return $this.slideDown(2000, function(){ // **this refers to div.content**
+// 	 	$this.delay(2000).slideUp(500);
+// 	 	console.log('hi'); 
+// 	 	// ***this time, it doesn't execute after delay() and slideUp() finished
+// 	 	// but waits for slideDown() to finish***
+// 	 });
+// };
+
+// $('h1').on('click', function() {
+// 	$(this).next('div.content').flash(); 
+// // chaining yapılmadığı için flash metodunda return statement kullanılmasa da olur
+// // *not practical since we can insert element between h1 and div*
+// });	
+
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

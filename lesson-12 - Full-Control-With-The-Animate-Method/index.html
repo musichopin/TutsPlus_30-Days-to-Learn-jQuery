@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>Animate</title>
+	<style>
+
+	div.box {
+		width: 400px;
+		background: red;
+		padding: 2em;
+		position: relative;
+		transition: border-radius 1s;
+	}
+
+	.rounded {
+		border-radius: 50px;
+		/*if we didnt add transition it would directly change border-radius*/
+	}
+
+	.moving {
+		animation: move 4s infinite;
+	}
+
+	@keyframes move {
+		from   {background-color:red; left:0px; top:0px;} /*0%*/
+	    50%  {background-color:yellow; left:200px; top:200px;}
+	    to  {background-color:blue; left:0px; top:0px;} /*100%*/
+	}
+	</style>
+</head>
+<body>
+
+
+<div class="box">
+	<h2>Some Content Here</h2>
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+	</p>
+</div>
+
+<p><button>Increase</button></p>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<script>
+
+(function(){
+	// //1
+	// var box = $('div.box'); // querying the dom once
+	// // faster to writing "$('.box');"
+
+	// $('button').on('click', function() {
+	// 	box.css('fontSize', '25px'); // *or fontSize*
+	// });	
+
+	// //2: fontsize ı sürekli olarak arttırmak için
+	// var box = $('div.box');
+
+	// $('button').on('click', function() {
+	// 	box.css('font-size', '+=5');
+	// });
+
+	// //2.b: same as:
+	// var box = $('div.box'),
+	// 	fontSize = parseInt(box.css('font-size'), 10);
+
+	// $('button').on('click', function() {
+	// 	box.css('font-size', fontSize += 5);
+	// });
+
+	//3: !not recommended to use multiple css() this way:
+	// var box = $('div.box');
+
+	// $('button').on('click', function() {
+	// 	box.css('font-size', '+=5').css('color','white');
+	// });
+
+	// //3b: instead use multiple css() only once passing an object:
+	// var box = $('div.box');
+
+	// $('button').on('click', function() {
+	// 	box.css({
+	// 		'font-size': '+=5', 
+	// 		'color':'white'
+	// 	});
+	// });
+
+	// //3c: using animate() instead of css():
+	// var box = $('div.box');
+
+	// $('button').on('click', function() {
+	// 	box.animate({
+	// 		'fontSize': '+=5', // *we are not adding pixels as its default*
+	// 		'width': '+=300'
+	// 		// *color is not animated but we can use 
+	// 		// jQuery plugins or CSS3 transition for that*
+	// 	});
+	// });
+
+	// //4:**there are 2 different ways we can structure animate()**
+	// // using multiple args inside animate() with syntax-1
+	// // *syntax-1: (selector).animate({styles},speed,easing,callback)*
+	// var box = $('div.box');
+
+	// $('button').on('click', function() {
+	// 	box.animate({
+	// 		'fontSize': '+=5', // *property names should be camalCase with animate()*
+	// 			}, 2000, 'linear', function(){
+	// 				alert("completed!");
+	// 			});
+	// });
+
+	// //4b: using multiple args inside animate() with syntax-2
+	// // *syntax-2: (selector).animate({styles},{options})*
+	// var box = $('div.box');
+
+	// $('button').on('click', function() {
+
+	// 	box.animate({
+	// 		'fontSize': '+=5',
+	// 	}, {
+	// 		duration: 500,
+	// 		easing: 'linear',
+	// 		complete: function() {
+	// 			alert('completed!');
+	// 			console.log(this);
+	// 			// **prints, "<div class="box" style="font-size: 21px;">"**
+	// 		},
+	// 		step: function() { // occurs at every iteration of animation
+	// 			console.log('current fontsize is: ' + $(this).css('fontSize'));
+	// 			// this references "div.box"
+	// 		}
+				
+	// 	});
+	// });
+
+
+	// //5: using multiple animations and queue()
+	// var box = $('div.box');
+
+	// $('button').on('click', function() {
+
+	// 	box
+	// 		.animate({
+	// 			'fontSize': '+=5'
+	// 		}, {duration: 3000})
+	// 		.animate({'top': '150'}, {duration: 1500, queue: false});
+	// 		// **with default value of queue property being true
+	// 		// 2nd animation method is executed after the 1st one is completed.
+	// 		// in order to execute 2 animation simultaneously we say "queue: false"
+	// });
+
+
+	//6: little project in which we try to centralize the box
+	// var box = $('div.box'),
+	// 	winWidth = $(window).width() / 2 - box.outerWidth(true)/2;
+	// 	winHeight = $(window).height() / 2 - box.outerHeight(true)/2;
+	// 	// **outerWidth(true) takes into account padding, border and margin.
+	// 	// however since there is still default margin on body, 
+	// 	// if we relative position, box will not be perfectly centered.
+	// 	// bu durumda body'nin margin'ini yok etmek şık bir görüntü oluşturmaz.
+	// 	// box'a css'de absolute değeri verirsek de kendisinden sonra gelen 
+	// 	// elementler (misal button) document flow'dan çıkar.
+	// 	// yapılacak en mantıklı hareket box'a dinamik olarak 
+	// 	// absolute pozisyon vermek olacaktır**
+	// 	// **
+
+	// 	// *$(window).width() and $(window).height() are effected by browser size*
+
+	// $('button').on('click', function() {
+
+	// 	box.animate({
+	// 		'left': winWidth,
+	// 		'top': winHeight,
+	// 		'position': 'absolute'
+	// 	}, 2000 , function(){ // ***button disappears at the end of animation***
+	// 		$('p > button').css('display', 'none');
+	// 	});
+
+	// });
+
+	// // 	//6b: with two animation()
+	// // 	var box = $('div.box'),
+	// // 	winWidth = $(window).width() / 2 - box.outerWidth(true)/2;
+	// // 	winHeight = $(window).height() / 2 - box.outerHeight(true)/2;
+
+	// // 	$('button').on('click', function() {
+
+	// // 	box.animate({
+	// // 		'left': winWidth,
+	// // 		'position': 'absolute'
+	// // 	}, 2000)
+	// // 		.animate({
+	// // 		'top': winHeight
+	// // 	}, { duration:1000,
+	// // 		queue: false,
+	// // 		step: function(){
+	// // 		$('p > button').css('display', 'none');
+	// // 		}
+	// // 	});
+	// // });
+
+	// **css transition and animation should be preferred to jquery/js if possible
+	// (we only added class to the elements with jquery after clicking button)**
+	//6c: using css instead of jquery
+	var box = $('div.box');
+
+	$('button').on('click', function() {
+
+		box.addClass('moving');
+
+	});
+
+
+	// // 7: adding border radius with jquery
+	// var box = $('div.box');
+
+	// $('button').on('click', function() {
+
+	// 	box.animate({
+	// 		'borderRadius': 50 // 50px
+	// 	});
+
+	// });
+
+
+	// // 7b: adding border radius with css
+	// var box = $('div.box');
+
+	// $('button').on('click', function() {
+
+	// 	box.addClass('rounded');
+
+	// });
+
+
+})();
+</script>
+</body>
+</html>

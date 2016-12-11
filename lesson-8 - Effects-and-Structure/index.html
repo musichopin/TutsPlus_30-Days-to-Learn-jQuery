@@ -1,0 +1,349 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>Slides and Structure</title>
+	<style>
+
+	body {
+		width: 600px;
+		margin: auto;
+		font-family: sans-serif;
+	}
+
+	#contact {
+		background: #e3e3e3; 
+		padding: 1em 2em; 
+		position: relative; 
+		/* *position relative denmesinin sebebi js aktif değil ise close buttonun kendisine göre pozisyonlanmasını sağlamak* */
+	}
+	
+	/* *if js is active closes the contact form* */
+	.js #contact {
+		position: absolute; /*pozisyonu belirtilen parent elementi olmadığından body'ye göre pozisyonlanır*/
+		top: 0;
+		width: inherit; 
+		/*inherits from its parent, body (absolute olduğu için kullanılmış olabilir)*/
+		display: none;
+	}	
+
+	#contact h2 { margin-top: 0; }
+
+	#contact ul { padding: 0; }
+
+	#contact li {
+		list-style: none;
+		margin-bottom: 1em;
+	}
+
+	/* Close button on form (which we create with js) */
+	.close {
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		font-weight: bold;
+		font-family: sans-serif;
+		cursor: pointer;
+	}	
+
+	/* Form inputs (no matter js enabled or not)*/
+	input, textarea { width: 100%; line-height: 2em;}
+	input[type=submit] { width: auto;  }
+	label { display: block; text-align: left; }
+
+	</style>
+</head>
+<body>
+
+
+<article>
+	<h1>My Awesome Post</h1>
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+	</p>
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+	</p>
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+	</p>
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+	</p>
+</article>
+
+<div id="contact">
+	<h2>Contact Me</h2>
+	<form action="#">
+		<ul>
+			<li>
+				<label for="name">Name: </label>
+	 			<input name="name" id="name">
+			</li>
+
+			<li>
+				<label for="email">Email Address: </label>
+		 		<input name="email" id="email">
+			</li>
+
+			<li>
+				<label for="comments">What's Up?</label>
+				<textarea name="comments" id="comments" cols="30" rows="10"></textarea>
+			</li>
+			<li>
+				<input type="submit" value="Submit">
+			</li>
+		</ul>
+	</form>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+
+<script>
+
+// we use self-invoking anonymous function to prevent creating global variables
+(function() {
+	
+$('html').addClass('js');
+// this expression enables for the panel to be closed when the js is enabled 
+
+var contactForm = {
+
+	container: $('#contact'),
+
+	// new object
+	config: {
+		effect: 'slideToggle', // hides and displays
+		speed: 500
+	},
+
+	init: function(config) {
+		$.extend(this.config, config);
+		// *alt: this.speed = config.speed;*
+
+		$('<button></button>', {
+			text: 'Contact Me'
+		})
+			.insertAfter( 'article:first' ) // creates and inserts button
+			.on( 'click', this.show ); // *this refers to contactform object*
+			// *if we used anonymous func. this wud refer to button element*
+			// adds event handler to button
+			// if we wrote "this.show()" it would call show method immediately
+	},
+
+	show: function() {
+		// *by using variables we improve the performance and readability*
+		var cf = contactForm,
+			container = cf.container, // *alt: container = $('#contact'),*
+			config = cf.config;
+
+			// *checks if the form is already displaying 
+			// so that user doesn't click button multiple times*
+		if ( container.is(':hidden') ) { // =display: none
+			cf.close.call(container); // to enable X button and append event
+			container[config.effect](config.speed); // basic ver: contactForm.container.show();
+			// to open the panel and add effect
+			// **array ile yazılma nedeni operation orderdan dolayı, yani 
+			// "cf.container.cf.config.effect" yazmanın mantıksız olması**
+			// alt: container.slideToggle(500);
+			// alt: container['slideToggle'](500);
+
+			// // alt: aşağıdaki "if ( $this.find('span.close').length ) return;" yerine:
+			// if ( container.find('span.close').length ){
+			// 	container[config.effect](config.speed);
+			// } else {
+			// 	cf.close.call(container); 
+			// 	container[config.effect](config.speed);
+			// }
+		}
+	},
+
+	close: function() {
+		var $this = $(this), // #contact (cached)
+			config = contactForm.config;
+
+		// *if span with close class already created return
+		// so that there wudnt be multiple spans every time we click button*
+		if ( $this.find('span.close').length ) return;
+		// *$this.find('span.close') is an object*
+		// alt: $this.find('span.close')[0]
+
+		$('<span class=close>X</span>')
+			.prependTo(this) // alt: prependTo(contactForm.container) 
+			.on('click', function() { // this = span
+				$this[config.effect](config.speed);
+				// alt: contactForm.container.hide()
+			})
+	}
+};
+
+contactForm.init({
+	// effect: 'fadeToggle',
+	speed: 300
+});
+
+})();
+
+
+//	//1: *basic, core version*
+// (function() {
+
+// $('html').addClass('js');
+
+// var contactForm = {
+
+// 	container: $('#contact'),
+
+// 	init: function() {
+// 		console.log(this); // *refers to contactForm object*
+// 		// prints: Object { container: Object, init: contactForm.init(), show: contactForm.show(), close: contactForm.close() }
+
+// 		$('<button></button>', {
+// 			text: 'Contact Me'
+// 		})
+// 			.insertAfter( 'article:first' )
+// 			.on( 'click', this.show ); // event handler
+// 			// ***this refers to contactform object***
+// 			// *we didn't use anonymous function inside because of too long indentation*:
+
+
+// 	},
+
+// 	show: function() {
+// 		// ***in the arg of call() we provide what would be 
+// 		// treated as "this" within close***
+// 		contactForm.close.call(contactForm.container);
+// 		// ***if we directly called close method it would pass contactForm object***
+
+// 		contactForm.container.show();
+// 		// ***this kw cudn't be used bc it refers to button element***
+
+// 	},
+
+// 	// 1b: ***if we used anonymous function inside init method with show() still available:***
+// 	// init: function() {
+// 	// $('<button></button>', {
+// 	// 		text: 'Contact Me'
+// 	// 	})
+// 	// 		.insertAfter( 'article:first' )
+// 	// 		.on( 'click', function(){contactForm.show();} );
+// 	// 		// ***this refers to button element***
+// 	// },
+
+// 	// show: function() {
+// 	//	this.close.call(this.container);
+// 	// 	this.container.show();
+// 	// 	// ***this refers to contactform object***
+// 	// }
+
+
+// 	// 1c: *** anonymous function inside init method without show method: ***
+// 	// .on( 'click', function(){
+// 	//				contactForm.close.call(contactForm.container);
+// 	//				contactForm.container.show();
+// 	//	});
+
+
+// 	// 1d: *** anonymous function inside init method without show and close methods: ***
+// 	//	.on( 'click', function(){
+// 	//			
+// 	//				$('<span class=close>X</span>')
+// 	//					.prependTo(contactForm.container)
+// 	//					.on('click', function() {
+// 	//								contactForm.container.hide(); 
+// 	//					});
+// 	//
+// 	//				contactForm.container.show();
+// 	//	});
+
+// 	close: function() {
+// 	// ***this kw objecti nitelemesine rağmen, object elementi 
+// 	// nitelediği için $(this) olarak yazılmış***
+// 	var $this = $(this); // ***refers to #contact i.e. contactForm.container***
+// 	// jquery metodlarına erişmek için $(this) dendi
+// 	// ***$(this)'in callback function içinde değişmesine karşılık 
+// 	// $this'e atandı ve location cache edildi***
+
+// 	$('<span class=close>X</span>')
+// 		.prependTo(this) // alt: prependTo(contactForm.container) 
+// 		.on('click', function() {
+
+// 			$this.hide(); 
+
+// 	//		console.log(this); // ***this kw refers to span element***
+// 		})
+// 	}
+
+// };
+
+// contactForm.init();
+
+// })();
+
+
+//  //2: slightly more complex:
+//1: *basic, core version*
+// (function() {
+
+// $('html').addClass('js');
+
+// var contactForm = {
+
+// 	container: $('#contact'),
+
+// 	// *we provide base settings after which we ll allow users to override them*
+// 	config: {
+// 	effect: 'slideToggle',
+// 	speed: 2000
+// 	},
+
+// 	init: function(config) {
+// 		$.extend(this.config, config);
+// 		// *because we referenced the effects by referring to config.effect in other methods it gets easier to override and update*
+// 		// *this.config is our target object, config is passed object*
+
+// 		$('<button></button>', {
+// 			text: 'Contact Me'
+// 		})
+// 			.insertAfter( 'article:first' )
+// 			.on( 'click', this.show ); // event handler
+// 	},
+
+// 	show: function() {
+// 		contactForm.close.call(contactForm.container);
+
+// 		// *array notation: no need for quotation mark to refer vars*
+// 		contactForm.container[contactForm.config.effect](contactForm.config.speed);
+// 		// alt: contactForm.container.fadeToggle(500);
+// 		// alt2: contactForm.container["fadeToggle"](500);
+// 		// alt3: contactForm.container[contactForm.config.effect](500);
+// 		// *using "contactForm.config.speed" instead of "500" is a little exaggeration*
+// 	},
+
+// 	close: function() {
+
+// 	var $this = $(this); // ***refers to #contact = contactForm.container***
+
+// 	$('<span class=close>X</span>')
+// 		.prependTo(this)
+// 		.on('click', function() {
+// 			$this[contactForm.config.effect](contactForm.config.speed);
+// 			// alt1: $this[contactForm.config.effect](500);
+// 			// alt2: $this["fadeToggle"](contactForm.config.speed);
+// 		})
+// 	}
+
+// };
+
+// // ***passing object to override defaults***
+// contactForm.init({
+// 	effect: 'fadeToggle',
+// 	speed: 500
+// });
+
+// })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>Q&A</title>
+</head>
+<body>
+
+<!-- ***creating template*** -->
+<script id=blogTemplate type=tuts/template>
+	<h2> {{title}} </h2>
+	<img src={{thumbnail}} alt={{title}}>
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+
+<script>
+
+(function() {
+	// ***we used array of objects since we were not able to use same variable name within same object***
+	var content = [
+		{
+			title: 'My awesome blog post',
+			thumbnail: 'http://d2o0t5hpnwv4c1.cloudfront.net/1137_terminal/preview.png'
+			// normally hot linking is not preferred
+		},
+		{
+			title: 'My second awesome blog post',
+			thumbnail: 'http://d2o0t5hpnwv4c1.cloudfront.net/1133_newrelic/200.jpg'
+		},
+		{
+			title: 'My third blog post',
+			thumbnail: 'http://d2o0t5hpnwv4c1.cloudfront.net/1137_terminal/preview.png'
+		}
+	],
+		template = $.trim( $('#blogTemplate').html() ),
+		// we used html() bc we wanna remove html fragment
+		// trims from end and beginning.
+		// ** "$('#blogTemplate').html()" returns,
+		// <h2> {{title}} </h2>
+		// <img src={{thumbnail}} alt={{title}}>**
+		frag = '';
+
+	// ***attaching to template:
+	// we filtered through the array and for each iteration in the array we take the template and replace it with the unique information from the object we are currently on and then we appended that to the dom
+	// for each item in the array we run a function***
+	$.each( content, function( index, obj ) { //**content is array, obj is each value of array**
+		frag += // *using regex*
+			template.replace( /{{title}}/ig, obj.title ) // i: case insensitive, g: global
+					.replace( /{{thumbnail}}/ig, obj.thumbnail );		
+					// alt: regex olmadan:
+					// .replace( "{{thumbnail}}" , obj.thumbnail );		
+	});
+
+	// **we are not manipulating the dom in every iteration of each method which is good**
+	$('body').append(frag); // ***append, += olarak düşünülebilir***
+	// alt: $('body').html(frag); // ***html ise = olarak düşünülebilir***
+
+	
+	// // 2: **basic version (not preferred for large templates since we are manipulating the DOM in every iteration)**
+	// $.each( content, function( index, obj ) {
+	// 	var temp =
+	// 		template.replace( /{{title}}/ig, obj.title )
+	// 				.replace( /{{thumbnail}}/ig, obj.thumbnail );
+
+	// 	$(document.body).append(temp);
+	// // ***override olacağından $(document.body).html(temp); denemez***
+	// });
+
+
+	// *(instead of creating template) this style should be avoided for creating messy code
+	// with html inside js and concatenation needed
+	// also it is not as flexible as creating template*:
+	// $("#blog").html('<h1>' + content[0][title] + '</h1>');
+
+
+
+	// //3: ***arrayin içinde object kullanılsaydı:***
+	// var content = {
+	// 	a: [
+	// 		'My awesome blog post',
+	// 		'http://d2o0t5hpnwv4c1.cloudfront.net/1137_terminal/preview.png'
+	// 		// normally hot linking is not preferred
+	// 	],
+	// 	b: [
+	// 		'My second awesome blog post',
+	// 		'http://d2o0t5hpnwv4c1.cloudfront.net/1133_newrelic/200.jpg'
+	// 	],
+	// 	c: [
+	// 		'My third blog post',
+	// 		'http://d2o0t5hpnwv4c1.cloudfront.net/1137_terminal/preview.png'
+	// 	]
+	// },
+	// 	template = $.trim( $('#blogTemplate').html() ),
+	// 	frag = '';
+		
+	// 	$.each( content, function( index, obj ) {
+	// 		frag += // *using regex*
+	// 			template.replace( /{{title}}/ig, obj[0] )
+	// 					.replace( /{{thumbnail}}/ig, obj[1] );		
+	// 	});
+	// 	$('body').append(frag);
+
+})();
+
+</script>
+</body>
+</html>

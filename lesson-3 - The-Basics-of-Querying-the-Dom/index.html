@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title></title>
+	<style>
+	.container { color: green;}
+	</style>
+</head>
+<body>
+
+<div class="container">
+	<h1>Welcome to My Website </h1>
+	<p>
+		Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+		tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+		quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+		consequat.
+	</p>
+
+	<div class="container">
+		<ul class="emphasis container">
+			<li>item</li>
+			<li>item 2</li>
+			<li>item 2</li>
+			<li>item 4</li>
+			<li>item 5</li>
+			<li>
+				<ul>
+					<li>hello from the nest.</li>
+				</ul
+
+			</li>
+		</ul>
+	</div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js"></script>
+
+<script>
+	// get first child(s) of the ul with a class of emphasis
+	// (for all children find() is used and for direct children children() is used):
+	// $('ul.emphasis').find('li:first-child').css('color', 'red');
+	// $('ul.emphasis').find('li:first').css('color', 'red');
+	// $('ul.emphasis').find('li:nth-child(1)').css('color', 'red');
+
+	// jquery functions of css equivalents are slightly slower:
+	// $('ul.emphasis').find('li').first().addClass('emphasis');
+
+	// get the previous element of the 4th direct children of the ul 
+	// with a class of emphasis and add text of "added with jQuery"
+	// (eq(3) is alt of nth-child(4) and next() is another option for prev()):
+	// $('ul.emphasis')
+	// 	.children('li')
+	// 		.eq(3)
+	// 			.prev().text('added with jQuery');
+
+	// *unless being dynamic is required, instead of calling as in 
+	// above style we call directly:*
+	// $('ul.emphasis li:nth-child(3)').text('added with jQuery');
+
+	// removes parent's class:
+	// $('li').parent('').removeClass('emphasis');
+	// $('li').parent('ul').removeClass('emphasis');
+
+	// removes ascendents' classes:
+	// $('li').parents('div.container').removeClass('container');
+
+	// removes closest ascendent's class:
+	// $('li').closest('div.container').removeClass('container');
+
+	// console.log($('ul').parents('.container'));
+	// console.log($('ul').closest('.container'));
+</script>
+
+</body>
+</html>
+
+
+
+
+
+

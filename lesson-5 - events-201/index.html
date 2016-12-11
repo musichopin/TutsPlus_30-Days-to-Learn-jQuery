@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset=utf-8>
+	<title>jQuery Events 201</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- definition list, term, detail -->
+<dl>
+	<dt>What are your hours?</dt>
+	<dd>We are open 24/7.</dd>
+	<dt>What are your hours?</dt>
+	<dd>We are open 24/7.</dd>
+	<dt>What are your hours?</dt>
+	<dd>We are open 24/7.</dd>
+	<dt>What are your hours?</dt>
+	<dd>We are open 24/7.</dd>
+	<dt>What are your hours?</dt>
+	<dd>We are open 24/7.</dd>
+</dl>
+
+<script src="jquery-1.7.1.js"></script>
+
+
+<script>
+
+(function() {
+
+	// similar functions: hide, show, fadeIn, slideDown, slideUp, toggle
+
+	// we cud have used hide() instead of addClass('hide') and then styling on css
+
+	// ething that meets a certain criteria within filter method is passed to the next method we use
+	// *we select the 4th dd element minimum with ":nth-child(n+4)"*
+	
+	$('dd').filter(':nth-child(n+4)').addClass('hide');
+	// we could have used anonymous function for filter method:
+	// $('dd').filter(function(){
+	//   return ...
+	// }).addClass('hide');
+
+	// *event delegation: by using only 1 event listener (dl) we enhance the performance*
+	// *we run a call-back function when mouse hover is executed on a dt element with a parent element of dl*
+	$('dl').on('mouseenter', 'dt', function() {
+		$(this)
+			.next()
+				.slideDown(200) // shows
+				.siblings('dd')
+					.slideUp(200); // hides
+	});
+
+	// alt: basic, slower version
+	// $('dt').mouseenter(function(){
+	// 	$this = $(this);
+	// 	$this.next().siblings('dd').hide();
+	// 	$this.next().show();
+	// });
+
+})();
+
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
